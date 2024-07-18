@@ -31,7 +31,7 @@ module Ahoy
           else
             where("properties::jsonb @> ?", properties.to_json)
           end
-        when /sqlite/
+        when /sqlite|litedb/
           properties.inject(all) do |relation, (k, v)|
             if v.nil?
               relation.where("JSON_EXTRACT(properties, ?) IS NULL", "$.#{k}")
@@ -70,7 +70,7 @@ module Ahoy
             quoted_prop = connection.quote(prop)
             relation = relation.group("properties#{cast} -> #{quoted_prop}")
           end
-        when /sqlite/
+        when /sqlite|litedb/
           props.each do |prop|
             quoted_prop = connection.quote("$.#{prop}")
             relation = relation.group("JSON_EXTRACT(properties, #{quoted_prop})")
